@@ -29,11 +29,12 @@ jobs:
           git fetch origin main
           git fetch upstream main
 
+          # Ephemeral sync branch recreated on every run.
           git checkout -B temp-sync upstream/main
           # Keep workflow files from fork/main to avoid push rejection when token lacks workflow-file write permission.
           git checkout origin/main -- .github/workflows
 
-          if ! git diff --quiet; then
+          if ! git diff --quiet HEAD --; then
             git add -A
             git commit -m "chore: sync upstream (exclude workflow files)"
           fi
