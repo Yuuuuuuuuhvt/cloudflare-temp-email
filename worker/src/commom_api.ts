@@ -26,6 +26,7 @@ api.get('/open_api/settings', async (c) => {
         "maxAddressLen": utils.getIntValue(c.env.MAX_ADDRESS_LEN, 30),
         "defaultDomains": utils.getDefaultDomains(c),
         "domains": utils.getDomains(c),
+        "randomSubdomainDomains": utils.getRandomSubdomainDomains(c),
         "domainLabels": utils.getStringArray(c.env.DOMAIN_LABELS),
         "needAuth": needAuth,
         "adminContact": c.env.ADMIN_CONTACT,
@@ -43,7 +44,9 @@ api.get('/open_api/settings', async (c) => {
         "version": CONSTANTS.VERSION,
         "showGithub": !utils.getBooleanValue(c.env.DISABLE_SHOW_GITHUB),
         "disableAdminPasswordCheck": utils.getBooleanValue(c.env.DISABLE_ADMIN_PASSWORD_CHECK),
-        "enableAddressPassword": utils.getBooleanValue(c.env.ENABLE_ADDRESS_PASSWORD)
+        "enableAddressPassword": utils.getBooleanValue(c.env.ENABLE_ADDRESS_PASSWORD),
+        "statusUrl": utils.getStringValue(c.env.STATUS_URL),
+        "enableGlobalTurnstileCheck": utils.isGlobalTurnstileEnabled(c)
     });
 })
 

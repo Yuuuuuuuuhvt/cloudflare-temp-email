@@ -10,33 +10,9 @@ jobs:
     name: Sync latest commits from upstream repo
     runs-on: ubuntu-latest
     if: ${{ github.event.repository.fork }}
-    permissions:
-      contents: write
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Sync upstream changes (exclude workflow files)
-        run: |
-          set -euo pipefail
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git remote add upstream https://github.com/dreamhunter2333/cloudflare_temp_email.git || git remote set-url upstream https://github.com/dreamhunter2333/cloudflare_temp_email.git
-          git fetch origin main
-          git fetch upstream main
-
-          # Ephemeral sync branch recreated on every run.
-          git checkout -B temp-sync upstream/main
-          # Keep workflow files from fork/main to avoid push rejection when token lacks workflow-file write permission.
-          git checkout origin/main -- .github/workflows
-
-          if [ -n "$(git status --porcelain)" ]; then
-            git add -A
-            git commit -m "chore: sync upstream (exclude workflow files)"
-          fi
-
-          git push origin HEAD:main
+      - name: Sync upstream changes
+        run: gh repo sync ${{ github.repository }} --source dreamhunter2333/cloudflare_temp_email --branch main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

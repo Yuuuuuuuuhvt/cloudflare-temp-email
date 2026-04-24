@@ -6,13 +6,14 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useIsMobile } from '../utils/composables'
 import {
     DarkModeFilled, LightModeFilled, MenuFilled,
-    AdminPanelSettingsFilled
+    AdminPanelSettingsFilled, MonitorHeartFilled
 } from '@vicons/material'
 import { GithubAlt, Language, User, Home } from '@vicons/fa'
 
 import { useGlobalState } from '../store'
 import { api } from '../api'
-import { getRouterPathWithLang } from '../utils'
+import { getRouterPathWithLang, hashPassword } from '../utils'
+import Turnstile from '../components/Turnstile.vue'
 
 const message = useMessage()
 const notification = useNotification()
@@ -32,11 +33,22 @@ const menuValue = computed(() => {
     return "home";
 });
 
+const cfToken = ref('')
+const turnstileRef = ref(null)
+
 const authFunc = async () => {
     try {
+        await api.fetch('/open_api/site_login', {
+            method: 'POST',
+            body: JSON.stringify({
+                password: await hashPassword(auth.value),
+                cf_token: cfToken.value
+            })
+        });
         location.reload()
     } catch (error) {
         message.error(error.message || "error");
+        turnstileRef.value?.refresh?.();
     }
 }
 
@@ -59,6 +71,7 @@ const { locale, t } = useI18n({
             home: 'Home',
             menu: 'Menu',
             user: 'User',
+            status: 'Status',
             ok: 'OK',
         },
         zh: {
@@ -70,6 +83,7 @@ const { locale, t } = useI18n({
             home: '主页',
             menu: '菜单',
             user: '用户',
+            status: '状态',
             ok: '确定',
         }
     }
@@ -188,6 +202,25 @@ const menuOptions = computed(() => [
                 style: "width: 100%",
                 tag: "a",
                 target: "_blank",
+                href: openSettings.value?.statusUrl,
+            },
+            {
+                default: () => t('status'),
+                icon: () => h(NIcon, { component: MonitorHeartFilled })
+            }
+        ),
+        show: !!openSettings.value?.statusUrl,
+        key: "status"
+    },
+    {
+        label: () => h(
+            NButton,
+            {
+                text: true,
+                size: "small",
+                style: "width: 100%",
+                tag: "a",
+                target: "_blank",
                 href: "https://github.com/dreamhunter2333/cloudflare_temp_email",
             },
             {
@@ -266,6 +299,7 @@ onMounted(async () => {
             :title="t('accessHeader')">
             <p>{{ t('accessTip') }}</p>
             <n-input v-model:value="auth" type="password" show-password-on="click" />
+            <Turnstile ref="turnstileRef" v-if="openSettings.enableGlobalTurnstileCheck" v-model:value="cfToken" />
             <template #action>
                 <n-button :loading="loading" @click="authFunc" type="primary">
                     {{ t('ok') }}

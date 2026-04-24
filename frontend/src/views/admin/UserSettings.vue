@@ -20,8 +20,8 @@ const { t } = useI18n({
             enableMailAllowList: 'Enable Mail Address Allow List(Manually enterable)',
             manualInputPrompt: 'Type and press Enter to add',
             mailAllowList: 'Mail Address Allow List',
-            maxAddressCount: 'Maximum number of email addresses that can be binded',
-            emailCheckRegex: 'Email Check Regex (e.g. ^[^.]+@.+$ to disallow dots before @)',
+            maxAddressCount: 'Maximum number of email addresses that can be binded (0 = Unlimited)',
+            emailCheckRegex: "Email Check Regex (e.g. ^[^.]+{'@'}.+$ to disallow dots before {'@'})",
             enableEmailCheckRegex: 'Enable Email Check Regex',
         },
         zh: {
@@ -34,8 +34,8 @@ const { t } = useI18n({
             enableMailAllowList: '启用邮件地址白名单(可手动输入, 回车增加)',
             manualInputPrompt: '输入后按回车键添加',
             mailAllowList: '邮件地址白名单',
-            maxAddressCount: '可绑定最大邮箱地址数量',
-            emailCheckRegex: '邮箱正则校验 (例如 ^[^.]+@.+$ 禁止@前面有.)',
+            maxAddressCount: '可绑定最大邮箱地址数量（0 为不限制）',
+            emailCheckRegex: "邮箱正则校验 (例如 ^[^.]+{'@'}.+$ 禁止{'@'}前面有.)",
             enableEmailCheckRegex: '启用邮箱正则校验',
         }
     }
@@ -132,14 +132,14 @@ onMounted(async () => {
                     </n-input-group>
                 </n-form-item-row>
                 <n-form-item-row :label="t('enableEmailCheckRegex')">
-                    <n-input-group>
-                        <n-checkbox v-model:checked="userSettings.enableEmailCheckRegex" style="width: 20%;">
+                    <n-flex align="center" :wrap="false" style="width: 100%;">
+                        <n-checkbox v-model:checked="userSettings.enableEmailCheckRegex" style="flex: 0 0 auto;">
                             {{ t('enable') }}
                         </n-checkbox>
                         <n-input v-model:value="userSettings.emailCheckRegex"
-                            v-if="userSettings.enableEmailCheckRegex"
-                            style="width: 80%;" :placeholder="t('emailCheckRegex')" />
-                    </n-input-group>
+                            v-show="userSettings.enableEmailCheckRegex"
+                            style="flex: 1 1 auto;" :placeholder="t('emailCheckRegex')" />
+                    </n-flex>
                 </n-form-item-row>
             </n-form>
         </n-card>

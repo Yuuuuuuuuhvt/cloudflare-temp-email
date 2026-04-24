@@ -8,8 +8,8 @@ type Bindings = {
     // bindings
     DB: D1Database
     KV: KVNamespace
-    RATE_LIMITER: any
-    SEND_MAIL: any
+    RATE_LIMITER: RateLimit
+    SEND_MAIL: SendEmail
     ASSETS: Fetcher
     AI: Ai
 
@@ -25,6 +25,9 @@ type Bindings = {
     MAX_ADDRESS_LEN: string | number | undefined
     DEFAULT_DOMAINS: string | string[] | undefined
     DOMAINS: string | string[] | undefined
+    ENABLE_CREATE_ADDRESS_SUBDOMAIN_MATCH: string | boolean | undefined
+    RANDOM_SUBDOMAIN_DOMAINS: string | string[] | undefined
+    RANDOM_SUBDOMAIN_LENGTH: string | number | undefined
     DISABLE_CUSTOM_ADDRESS_NAME: string | boolean | undefined
     CREATE_ADDRESS_DEFAULT_DOMAIN_FIRST: string | boolean | undefined
     ADMIN_USER_ROLE: string | undefined
@@ -47,6 +50,7 @@ type Bindings = {
     NO_LIMIT_SEND_ROLE: string | undefined | null
     ADMIN_CONTACT: string | undefined
     COPYRIGHT: string | undefined
+    STATUS_URL: string | undefined
     DISABLE_SHOW_GITHUB: string | boolean | undefined
     FORWARD_ADDRESS_LIST: string | string[] | undefined
 
@@ -79,12 +83,14 @@ type Bindings = {
 
     // SMTP config
     SMTP_CONFIG: string | object | undefined
+    SEND_MAIL_DOMAINS: string | string[] | undefined
 
     // telegram config
     TELEGRAM_BOT_TOKEN: string
     TG_MAX_ADDRESS: number | undefined
     TG_BOT_INFO: string | object | undefined
     TG_ALLOW_USER_LANG: string | boolean | undefined
+    ENABLE_TG_PUSH_ATTACHMENT: string | boolean | undefined
 
     // webhook config
     FRONTEND_URL: string | undefined
@@ -92,6 +98,12 @@ type Bindings = {
     // AI extraction config
     ENABLE_AI_EMAIL_EXTRACT: string | boolean | undefined
     AI_EXTRACT_MODEL: string | undefined
+
+    // gzip compression for raw_mails
+    ENABLE_MAIL_GZIP: string | boolean | undefined
+
+    // E2E testing
+    E2E_TEST_MODE: string | boolean | undefined
 }
 
 type JwtPayload = {
@@ -131,6 +143,13 @@ type RPCEmailMessage = {
     headers: object | undefined | null,
 }
 
+type ParsedEmailAttachment = {
+    filename: string,
+    mimeType: string,
+    content: Uint8Array,
+    disposition: string,
+}
+
 type ParsedEmailContext = {
     rawEmail: string,
     parsedEmail?: {
@@ -138,7 +157,8 @@ type ParsedEmailContext = {
         subject: string,
         text: string,
         html: string,
-        headers?: Record<string, string>[]
+        headers?: Record<string, string>[],
+        attachments?: ParsedEmailAttachment[],
     } | undefined
 }
 
