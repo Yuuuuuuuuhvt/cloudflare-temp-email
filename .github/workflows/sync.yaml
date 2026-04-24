@@ -34,14 +34,9 @@ jobs:
           # Keep workflow files from fork/main to avoid push rejection when token lacks workflow-file write permission.
           git checkout origin/main -- .github/workflows
 
-          if ! git diff --quiet HEAD; then
+          if [ -n "$(git status --porcelain)" ]; then
             git add -A
             git commit -m "chore: sync upstream (exclude workflow files)"
-          fi
-
-          if ! git merge-base --is-ancestor origin/main HEAD; then
-            echo "Refusing non-fast-forward sync to main. Diagnose with: git log --oneline --left-right origin/main...HEAD"
-            exit 1
           fi
 
           git push origin HEAD:main
