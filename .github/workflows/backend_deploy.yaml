@@ -11,6 +11,7 @@ on:
 
 jobs:
   deploy:
+    # Temporarily disabled per repository maintenance request.
     if: false
     runs-on: ubuntu-latest
     permissions:
