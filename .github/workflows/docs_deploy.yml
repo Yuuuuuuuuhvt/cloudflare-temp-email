@@ -32,7 +32,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 10
+          version: 10.10.0
           run_install: false
 
       - name: Deploy Docs
@@ -44,7 +44,7 @@ jobs:
         run: |
           cd vitepress-docs/
           wget https://github.com/dreamhunter2333/cloudflare_temp_email/releases/latest/download/frontend.zip -O docs/public/ui_install/frontend.zip
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
           if TAG_NAME=$(gh release view --json tagName --jq '.tagName' 2>/dev/null); then
             echo "Using release tag $TAG_NAME"
           else

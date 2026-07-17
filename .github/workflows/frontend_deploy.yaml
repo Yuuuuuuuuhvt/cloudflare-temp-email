@@ -11,6 +11,9 @@ on:
 
 jobs:
   deploy-frontend:
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,7 +27,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: 10
+          version: 10.10.0
           run_install: false
 
       - name: Deploy Frontend for ${{ github.ref_name }}
@@ -32,7 +35,7 @@ jobs:
         run: |
           cd frontend/
           echo "${{ secrets.FRONTEND_ENV }}" > .env.prod
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
           export frontend_branch="${{ secrets.FRONTEND_BRANCH }}"
           if [ -n "$frontend_branch" ]; then
             echo "Deploying branch $frontend_branch"
@@ -48,6 +51,9 @@ jobs:
           FRONTEND_NAME: ${{ secrets.FRONTEND_NAME }}
 
   deploy-telegram-frontend:
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,7 +67,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: 10
+          version: 10.10.0
           run_install: false
 
       - name: Deploy Telegram Frontend for ${{ github.ref_name }}
@@ -69,7 +75,7 @@ jobs:
         run: |
           cd frontend/
           echo "${{ secrets.FRONTEND_ENV }}" > .env.prod
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
           export frontend_branch="${{ secrets.FRONTEND_BRANCH }}"
           if [ -n "$frontend_branch" ]; then
             echo "Deploying telegram mini app branch $frontend_branch"

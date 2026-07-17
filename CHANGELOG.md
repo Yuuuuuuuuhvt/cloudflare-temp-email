@@ -15,6 +15,10 @@
 
 ### Bug Fixes
 
+- fix: |GitHub Actions| `Upstream Sync` 改用具备 workflow 写权限的 `SYNC_TOKEN`，并让后端、前端与 Page Function 仅在同步成功后部署，避免同步失败时重复发布旧提交
+- fix: |GitHub Actions| 支持通过独立的 `ADMIN_PASSWORDS_JSON` Secret 轮换 Admin 控制台密码，并在部署时将新密码作为 Cloudflare 加密 Secret 覆盖旧配置，避免在仓库或日志中暴露口令
+- fix: |依赖安全| 将 AWS SDK 升级到 `3.1090.0` 并对 Worker/Frontend 增加生产依赖审计，移除当前锁文件中的 high 与 critical 漏洞告警
+- fix: |CI| 固定 pnpm `10.10.0` 并使用 frozen lockfile 安装依赖，避免部署阶段隐式改写依赖解析结果
 - fix: |Admin| 管理后台删除邮箱地址时，先删除该地址的邮件、发件记录、自动回复等关联数据，最后再删除地址本身；此前地址行先被删除导致按地址名匹配的子查询查不到数据，邮件等记录被遗留在数据库中
 - fix: |AI 提取| 强化提示词，要求 AI 保持邮件原始链接域名，避免小模型改写验证链接域名导致错误跳转（issue #1072）
 - fix: |AI 提取| HTML-only 邮件在发送给 Workers AI 前会先压缩为可读文本，避免样式模板过长导致验证码位于 4000 字截断之后而无法识别

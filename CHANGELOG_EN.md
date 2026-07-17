@@ -15,6 +15,10 @@
 
 ### Bug Fixes
 
+- fix: |GitHub Actions| Use a workflow-enabled `SYNC_TOKEN` for `Upstream Sync`, and deploy the backend, frontend, and Page Function only after a successful sync so that failed synchronization no longer republishes an old commit
+- fix: |GitHub Actions| Support Admin console password rotation through a dedicated `ADMIN_PASSWORDS_JSON` secret and override the old configuration with an encrypted Cloudflare secret during deployment so credentials are not exposed in the repository or logs
+- fix: |Dependency Security| Upgrade the AWS SDK to `3.1090.0` and audit Worker/Frontend production dependencies, removing the current lockfile's high and critical vulnerability reports
+- fix: |CI| Pin pnpm `10.10.0` and install from frozen lockfiles so deployment cannot silently rewrite dependency resolution
 - fix: |Admin| When deleting an address from the admin panel, delete its mails, sender records, sendbox and auto-reply entries before removing the address row itself; previously the address row was deleted first, so the name-based subqueries matched nothing and the mails were left orphaned in the database
 - fix: |AI Extract| Strengthen the prompt to keep original link domains from the email, preventing small models from rewriting verification-link domains (issue #1072)
 - fix: |AI Extract| Convert HTML-only mail bodies into compact readable text before sending them to Workers AI, preventing long templates from pushing verification codes past the 4000-character truncation window

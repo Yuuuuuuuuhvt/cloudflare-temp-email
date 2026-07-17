@@ -16,6 +16,12 @@
 
 如果希望某个用户也能进入 Admin 控制台，请配置 `ADMIN_USER_ROLE`，并在用户管理中给该用户设置相同的角色。
 
+## 轮换管理口令
+
+GitHub 和 Cloudflare 不会回显已经保存的 Secret，因此无法从部署配置中恢复忘记的管理口令。通过 GitHub Actions 部署时，可以在仓库 Actions Secrets 中添加 `ADMIN_PASSWORDS_JSON`，其值为包含一个或多个新密码的 JSON 数组，例如 `["请替换为至少 32 位的随机密码"]`，然后手动运行 `Deploy Backend`。部署流程会将新值保存为 Cloudflare 加密 Secret，并覆盖 `BACKEND_TOML` 中的旧 `ADMIN_PASSWORDS`。
+
+部署成功后，旧管理口令立即失效。请将新口令保存到密码管理器，并持续保留 `ADMIN_PASSWORDS_JSON`；删除该 Secret 后，后续部署会重新使用 `BACKEND_TOML` 中的旧配置。
+
 ![admin](/feature/admin.png)
 
 ## 账号列表排序

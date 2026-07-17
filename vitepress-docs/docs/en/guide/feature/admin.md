@@ -21,6 +21,12 @@ whose email looks like `admin@example.com` does not automatically grant admin pe
 If you want a user account to access the Admin console, configure `ADMIN_USER_ROLE` and assign the
 same role to that user in user management.
 
+## Rotate Admin Passwords
+
+GitHub and Cloudflare do not reveal stored secrets, so a forgotten Admin password cannot be recovered from the deployment configuration. For a GitHub Actions deployment, add `ADMIN_PASSWORDS_JSON` to the repository Actions secrets with a JSON array containing one or more new passwords, such as `["replace-with-a-random-password-of-at-least-32-characters"]`, then manually run `Deploy Backend`. The workflow stores the value as an encrypted Cloudflare secret and overrides the old `ADMIN_PASSWORDS` value from `BACKEND_TOML`.
+
+The old Admin passwords stop working as soon as deployment succeeds. Store the new password in a password manager and keep `ADMIN_PASSWORDS_JSON` configured; removing this secret makes a later deployment fall back to the old value in `BACKEND_TOML`.
+
 ![admin](/feature/admin.png)
 
 ## Account List Sorting
