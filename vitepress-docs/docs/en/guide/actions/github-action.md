@@ -33,6 +33,7 @@ Then go to the repository page `Settings` -> `Secrets and variables` -> `Actions
    | Name                           | Description                                                                                                                                    |
    | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
    | `BACKEND_TOML`                 | Backend configuration file, [see here](/en/guide/cli/worker.html#modify-wrangler-toml-configuration-file)                                      |
+   | `ADMIN_PASSWORDS_JSON`         | (Optional) JSON array of Admin console passwords, for example `["replace-with-a-random-password"]`. When configured, the deployment stores it as an encrypted Cloudflare secret that overrides `ADMIN_PASSWORDS` from `BACKEND_TOML`, allowing an unreadable old password to be rotated |
    | `DEBUG_MODE`                   | (Optional) Whether to enable debug mode, set to `true` to enable. By default, worker deployment logs are not output to GitHub Actions page, enabling this will output them |
    | `BACKEND_USE_MAIL_WASM_PARSER` | (Optional) Whether to use WASM to parse emails, set to `true` to enable. For features, refer to [Configure Worker to use WASM Email Parser](/en/guide/feature/mail_parser_wasm_worker) |
    | `USE_WORKER_ASSETS`            | (Optional) Deploy Worker with frontend assets, set to `true` to enable                                                                         |
@@ -50,6 +51,12 @@ Then go to the repository page `Settings` -> `Secrets and variables` -> `Actions
    | `PAGE_TOML`        | (Optional) Used only by the `Deploy Frontend with page function` workflow. Required when using page functions to forward backend requests. Please copy the content from `pages/wrangler.toml` and modify the `service` field to your worker backend name according to actual situation. This workflow builds the frontend in Pages mode and uses same-origin requests, so it does not read `FRONTEND_ENV` |
    | `TG_FRONTEND_NAME` | (Optional) The project name you created in Cloudflare Pages, same as `FRONTEND_NAME`. Fill this in if you need Telegram Mini App functionality                                  |
 
+- Auto-update `secrets`
+
+   | Name         | Description |
+   | ------------ | ----------- |
+   | `SYNC_TOKEN` | Required when enabling `Upstream Sync`. Create a fine-grained personal access token scoped only to the fork and grant `Contents: Read and write` plus `Workflows: Read and write`. GitHub's built-in `GITHUB_TOKEN` cannot merge upstream commits that modify workflow files |
+
 ### Deploy
 
 - Open the `Actions` page of the repository
@@ -57,7 +64,21 @@ Then go to the repository page `Settings` -> `Secrets and variables` -> `Actions
 - If you need separate frontend and backend deployment that talks to Worker directly, find `Deploy Frontend` and click `Run workflow` to select a branch and deploy manually
 - If you need Pages deployment with Page Functions forwarding backend requests, find `Deploy Frontend with page function` and click `Run workflow` to deploy manually
 
+To rotate the Admin console password, generate a random password with at least 32 characters, save `["random-password"]` as `ADMIN_PASSWORDS_JSON`, and manually run `Deploy Backend`. The new password takes effect as soon as deployment succeeds. Keep this secret configured; removing it makes subsequent deployments fall back to `ADMIN_PASSWORDS` in `BACKEND_TOML`.
+
+### Auto-Update with Page Functions Forwarding
+
+If you want to use `Upstream Sync` for automatic updates and also let Pages forward backend requests through Page Functions, use the `Deploy Frontend with page function` workflow instead of `Deploy Frontend`.
+
+- Enable `Upstream Sync`, `Deploy Backend`, and `Deploy Frontend with page function`
+- Configure the `PAGE_TOML` repository secret by copying the content of `pages/wrangler.toml`
+- Change the `service` field in `PAGE_TOML` to your Worker backend name
+- This workflow runs `pnpm build:pages`, uses same-origin frontend requests, and does not read `FRONTEND_ENV`
+- After each successful `Upstream Sync`, `Deploy Frontend with page function` deploys the frontend automatically when `PAGE_TOML` is configured; a failed sync does not trigger deployment
+
 ## How to Configure Auto-Update
 
-1. Open the `Actions` page of the repository, find `Upstream Sync`, and click `enable workflow` to enable the `workflow`
-2. If `Upstream Sync` fails, go to the repository homepage and click `Sync` to synchronize manually
+1. Create a fine-grained personal access token scoped only to the fork and grant `Contents: Read and write` plus `Workflows: Read and write`
+2. Save the token as `SYNC_TOKEN` under repository `Settings` -> `Secrets and variables` -> `Actions`
+3. Open the repository `Actions` page, find `Upstream Sync`, and click `enable workflow`
+4. If you do not want to store a long-lived token, leave scheduled sync disabled and use `Sync fork` on the repository homepage instead

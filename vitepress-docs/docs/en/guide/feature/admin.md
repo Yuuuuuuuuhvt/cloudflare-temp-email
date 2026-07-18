@@ -8,6 +8,25 @@ After deploying the frontend application, click the upper-left logo 5 times or v
 
 You need to configure `ADMIN_PASSWORDS` in the backend or ensure the current user role is `ADMIN_USER_ROLE`, otherwise access to the console will be denied.
 
+## Admin Passwords vs User Accounts
+
+`ADMIN_PASSWORDS` is the management password for the Admin console. It is not a site user account
+and does not correspond to any mailbox address. Logging in with an admin password grants access to
+the console, but that login itself cannot receive mail.
+
+Site user accounts are stored in the `users` table and use the user login flow. Whether a user can
+receive mail depends on whether they created or bound a mailbox address. Creating a normal user
+whose email looks like `admin@example.com` does not automatically grant admin permissions.
+
+If you want a user account to access the Admin console, configure `ADMIN_USER_ROLE` and assign the
+same role to that user in user management.
+
+## Rotate Admin Passwords
+
+GitHub and Cloudflare do not reveal stored secrets, so a forgotten Admin password cannot be recovered from the deployment configuration. For a GitHub Actions deployment, add `ADMIN_PASSWORDS_JSON` to the repository Actions secrets with a JSON array containing one or more new passwords, such as `["replace-with-a-random-password-of-at-least-32-characters"]`, then manually run `Deploy Backend`. The workflow stores the value as an encrypted Cloudflare secret and overrides the old `ADMIN_PASSWORDS` value from `BACKEND_TOML`.
+
+The old Admin passwords stop working as soon as deployment succeeds. Store the new password in a password manager and keep `ADMIN_PASSWORDS_JSON` configured; removing this secret makes a later deployment fall back to the old value in `BACKEND_TOML`.
+
 ![admin](/feature/admin.png)
 
 ## Account List Sorting

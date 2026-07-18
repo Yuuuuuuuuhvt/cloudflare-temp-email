@@ -11,6 +11,9 @@ on:
 
 jobs:
   check:
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     outputs:
       has_config: ${{ steps.check.outputs.has_config }}
@@ -37,22 +40,22 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: 10
+          version: 10.10.0
           run_install: false
 
       - name: Deploy Frontend for ${{ github.ref_name }}
         run: |
           cd frontend/
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
           pnpm build:pages
           cd ../pages/
           echo '${{ secrets.PAGE_TOML }}' > wrangler.toml
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
           pnpm run deploy
           echo "Deploying production for ${{ github.ref_name }}"
         env:

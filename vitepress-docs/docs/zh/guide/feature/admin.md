@@ -6,7 +6,21 @@
 
 部署前端应用之后，点击 左上角 logo 5 次 或者访问 `/admin` 路径即可进入管理控制台。
 
-需要在后端配置 `ADMIN_PASSWORDS` 或者当前用户角色为 `ADMIN_USER_ROLE`, 则不允许访问控制台。
+需要在后端配置 `ADMIN_PASSWORDS` 或者当前用户角色为 `ADMIN_USER_ROLE`，否则不允许访问控制台。
+
+## 管理口令和用户账号的区别
+
+`ADMIN_PASSWORDS` 是 Admin 控制台的管理口令，不是站点用户账号，也不对应某个邮箱地址。使用管理口令登录后可以进入后台，但它本身不能收信。
+
+站点用户账号存储在 `users` 表中，需要通过用户登录体系进入；用户是否能收信取决于是否创建或绑定了邮箱地址。即使你创建了一个邮箱为 `admin@example.com` 或用户名看起来像 `admin` 的普通用户，它也不会自动获得后台权限。
+
+如果希望某个用户也能进入 Admin 控制台，请配置 `ADMIN_USER_ROLE`，并在用户管理中给该用户设置相同的角色。
+
+## 轮换管理口令
+
+GitHub 和 Cloudflare 不会回显已经保存的 Secret，因此无法从部署配置中恢复忘记的管理口令。通过 GitHub Actions 部署时，可以在仓库 Actions Secrets 中添加 `ADMIN_PASSWORDS_JSON`，其值为包含一个或多个新密码的 JSON 数组，例如 `["请替换为至少 32 位的随机密码"]`，然后手动运行 `Deploy Backend`。部署流程会将新值保存为 Cloudflare 加密 Secret，并覆盖 `BACKEND_TOML` 中的旧 `ADMIN_PASSWORDS`。
+
+部署成功后，旧管理口令立即失效。请将新口令保存到密码管理器，并持续保留 `ADMIN_PASSWORDS_JSON`；删除该 Secret 后，后续部署会重新使用 `BACKEND_TOML` 中的旧配置。
 
 ![admin](/feature/admin.png)
 

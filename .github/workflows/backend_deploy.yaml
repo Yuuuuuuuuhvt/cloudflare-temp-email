@@ -11,6 +11,9 @@ on:
 
 jobs:
   deploy:
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,13 +24,13 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 10
+          version: 10.10.0
           run_install: false
 
       - name: Deploy Backend for ${{ github.ref_name }}
@@ -37,7 +40,7 @@ jobs:
           
           if [ -n "$use_worker_assets" ]; then
             cd frontend/
-            pnpm install --no-frozen-lockfile
+            pnpm install --frozen-lockfile
             if [ -n "$use_worker_assets_with_telegram" ]; then
               echo "Building with telegram pages"
               pnpm build:telegram:pages
@@ -55,19 +58,54 @@ jobs:
           # ✅ 修复核心：使用环境变量写入，避免 Shell 解析特殊字符
           printf '%s\n' "$WRANGLER_TOML_CONTENT" > wrangler.toml
           
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
 
           if [ -n "$use_mail_wasm_parser" ]; then
             echo "Using mail-parser-wasm-worker"
-            pnpm add mail-parser-wasm-worker
+            pnpm add --save-exact mail-parser-wasm-worker@0.2.2
             git apply ../.github/config/mail-parser-wasm-worker.patch
             echo "Applied mail-parser-wasm-worker patch"
           fi
 
+          if [ -n "$ADMIN_PASSWORDS_JSON" ]; then
+            node -e '
+              try {
+                const passwords = JSON.parse(process.env.ADMIN_PASSWORDS_JSON);
+                if (
+                  !Array.isArray(passwords) ||
+                  passwords.length === 0 ||
+                  passwords.some((password) =>
+                    typeof password !== "string" || password.length === 0
+                  )
+                ) {
+                  throw new Error("invalid password list");
+                }
+              } catch {
+                console.error(
+                  "::error::ADMIN_PASSWORDS_JSON must be a non-empty JSON array of non-empty strings."
+                );
+                process.exit(1);
+              }
+            '
+          fi
+
+          deploy_backend() {
+            if [ -z "$ADMIN_PASSWORDS_JSON" ]; then
+              pnpm run deploy
+              return
+            fi
+
+            node -e '
+              process.stdout.write(JSON.stringify({
+                ADMIN_PASSWORDS: process.env.ADMIN_PASSWORDS_JSON,
+              }));
+            ' | pnpm exec wrangler deploy --minify --secrets-file /dev/stdin
+          }
+
           if [ "$debug_mode" = "true" ]; then
-            pnpm run deploy
+            deploy_backend
           else
-            if pnpm run deploy >/dev/null 2>&1; then
+            if deploy_backend >/dev/null 2>&1; then
               echo "Deploy succeeded"
             else
               code=$?
@@ -81,3 +119,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # ✅ 将 secret 映射到环境变量中
           WRANGLER_TOML_CONTENT: ${{ secrets.BACKEND_TOML }}
+          ADMIN_PASSWORDS_JSON: ${{ secrets.ADMIN_PASSWORDS_JSON }}
