@@ -12,6 +12,8 @@
 
 ### Bug Fixes
 
+- fix: |依赖安全| Frontend 生产依赖 nanoid 升级至 `3.3.18`，消除 GHSA-28wg-ghj8-5hjv 与 GHSA-2v37-7h3g-55p8 两个 high 级别漏洞告警，恢复生产依赖审计通过
+
 ### Improvements
 
 - fix: |Worker| 地址活跃时间保活增加 1 天写入窗口，用户设置和邮箱访问不再重复更新近期活跃地址，降低 D1 写入量（issue #1103）

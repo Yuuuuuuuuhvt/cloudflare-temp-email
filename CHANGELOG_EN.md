@@ -12,6 +12,8 @@
 
 ### Bug Fixes
 
+- fix: |Dependency Security| Bump the Frontend production dependency nanoid to `3.3.18`, clearing the two high-severity advisories GHSA-28wg-ghj8-5hjv and GHSA-2v37-7h3g-55p8 and restoring a passing production dependency audit
+
 ### Improvements
 
 - fix: |Worker| Throttle address-activity touches to one write per day so user settings and mailbox access do not repeatedly update recently active addresses, reducing D1 writes (issue #1103)
