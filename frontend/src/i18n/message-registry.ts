@@ -190,6 +190,14 @@ export const MESSAGE_REGISTRY = {
       "en": "Fullscreen",
       "zh": "全屏"
     },
+    "loadRemoteImages": {
+      "en": "Load Images",
+      "zh": "加载图片"
+    },
+    "remoteImagesBlocked": {
+      "en": "{count} remote resources blocked to protect your privacy",
+      "zh": "已阻止 {count} 项外部资源以保护隐私"
+    },
     "reply": {
       "en": "Reply",
       "zh": "回复"
@@ -843,6 +851,10 @@ export const MESSAGE_REGISTRY = {
     "mail_count": {
       "en": "Mail Count",
       "zh": "邮件数量"
+    },
+    "itemCount": {
+      "en": "Total",
+      "zh": "总数"
     },
     "name": {
       "en": "Name",
@@ -2094,6 +2106,10 @@ export const MESSAGE_REGISTRY = {
     }
   },
   "views.common.Appearance": {
+    "autoLoadRemoteImages": {
+      "en": "Automatically load external images in mail body",
+      "zh": "自动加载邮件正文中的外部图片"
+    },
     "autoRefreshInterval": {
       "en": "Auto Refresh Interval(Sec)",
       "zh": "自动刷新间隔(秒)"
