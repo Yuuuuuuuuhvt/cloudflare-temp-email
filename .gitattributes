@@ -1,0 +1,5 @@
+# Bilingual changelogs: fork-maintained entries and upstream entries both append
+# to the same (main) section. Use the built-in union merge driver so upstream
+# sync merges combine both sides' additions instead of conflicting.
+CHANGELOG.md merge=union
+CHANGELOG_EN.md merge=union
