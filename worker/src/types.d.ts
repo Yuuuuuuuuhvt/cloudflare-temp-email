@@ -49,6 +49,7 @@ type Bindings = {
     DOMAIN_LABELS: string | string[] | undefined
     PASSWORDS: string | string[] | undefined
     ADMIN_PASSWORDS: string | string[] | undefined
+    ADMIN_API_IP_WHITELIST: string | string[] | undefined
     DISABLE_ADMIN_PASSWORD_CHECK: string | boolean | undefined
     JWT_SECRET: string
     BLACK_LIST: string | undefined
@@ -59,6 +60,8 @@ type Bindings = {
     ENABLE_USER_DELETE_EMAIL: string | boolean | undefined
     ENABLE_ADDRESS_PASSWORD: string | boolean | undefined
     ENABLE_AGENT_EMAIL_INFO: string | boolean | undefined
+    ENABLE_REDEEM_CODE: string | boolean | undefined
+    REDEEM_CODE_URL: string | undefined
     SMTP_IMAP_PROXY_CONFIG: string | SmtpImapProxyConfig | undefined
     ENABLE_INDEX_ABOUT: string | boolean | undefined
     DEFAULT_SEND_BALANCE: number | string | undefined
@@ -117,6 +120,7 @@ type Bindings = {
 
     // gzip compression for raw_mails
     ENABLE_MAIL_GZIP: string | boolean | undefined
+    ENABLE_MAIL_READ_STATUS: string | boolean | undefined
     CLEANUP_BATCH_SIZE: string | number | undefined
 
     // E2E testing

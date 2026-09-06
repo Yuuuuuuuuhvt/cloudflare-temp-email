@@ -6,6 +6,7 @@ const messages: LocaleMessages = {
     UserAcceesTokenExpiredMsg: "Your access token has expired, please refresh the page",
     UserRoleIsNotAdminMsg: "Your user role is not admin, no access to visit this page",
     NeedAdminPasswordMsg: "You need to provide the admin password to access this page",
+    AdminApiIpNotAllowedMsg: "Your IP address isn't on the admin whitelist",
 
     KVNotAvailableMsg: "KV is not available, please contact the administrator",
     DBNotAvailableMsg: "DB is not available, please contact the administrator",
@@ -20,6 +21,10 @@ const messages: LocaleMessages = {
     InvalidAddressMsg: "Invalid address",
     InvalidAddressCredentialMsg: "Invalid address credential",
     UserDeleteEmailDisabledMsg: "User delete address/email is disabled, please contact the administrator",
+
+    RedeemCodeUnavailableMsg: "The redemption code is invalid, used, or expired",
+    RedeemCodeInvalidMsg: "Invalid redemption code configuration",
+    RedeemRoleConflictMsg: "The user already has a different role",
 
     UserNotFoundMsg: "User not found",
     UserAlreadyExistsMsg: "User already exists, please login",

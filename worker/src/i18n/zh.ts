@@ -6,6 +6,7 @@ const messages: LocaleMessages = {
     UserAcceesTokenExpiredMsg: "您的访问令牌已过期, 请刷新页面",
     UserRoleIsNotAdminMsg: "您的用户角色不是管理员, 无权访问",
     NeedAdminPasswordMsg: "您需要提供管理员密码才能访问此页面",
+    AdminApiIpNotAllowedMsg: "当前 IP 不在管理员白名单中",
 
     KVNotAvailableMsg: "KV 不可用, 请联系管理员",
     DBNotAvailableMsg: "DB 不可用, 请联系管理员",
@@ -20,6 +21,10 @@ const messages: LocaleMessages = {
     InvalidAddressMsg: "无效的邮箱地址",
     InvalidAddressCredentialMsg: "无效的邮箱地址凭据",
     UserDeleteEmailDisabledMsg: "用户删除邮箱/邮件已禁用, 请联系管理员",
+
+    RedeemCodeUnavailableMsg: "兑换码无效、已使用或已过期",
+    RedeemCodeInvalidMsg: "兑换码配置无效",
+    RedeemRoleConflictMsg: "当前用户已有其他角色，无法兑换",
 
     UserNotFoundMsg: "用户不存在",
     UserAlreadyExistsMsg: "用户已存在, 请登录",

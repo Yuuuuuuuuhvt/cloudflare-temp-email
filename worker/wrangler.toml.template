@@ -45,6 +45,8 @@ PREFIX = "tmp"
 # PASSWORDS = ["123", "456"]
 # For admin panel
 # ADMIN_PASSWORDS = ["123", "456"]
+# Restrict all /admin/* APIs to exact client IPv4 or IPv6 addresses
+# ADMIN_API_IP_WHITELIST = ["203.0.113.10", "2001:db8::1"]
 # warning: no password or user check for admin portal
 # DISABLE_ADMIN_PASSWORD_CHECK = false
 # ADMIN CONTACT, CAN BE ANY STRING
@@ -77,6 +79,12 @@ ENABLE_USER_CREATE_EMAIL = true
 # DISABLE_ANONYMOUS_USER_CREATE_EMAIL = true
 # Allow users to delete messages
 ENABLE_USER_DELETE_EMAIL = true
+# Enable the redemption code page and APIs
+# ENABLE_REDEEM_CODE = true
+# Optional external link for obtaining redemption codes
+# REDEEM_CODE_URL = "https://example.com/redeem-codes"
+# Track read and unread mail. Run the database migration before enabling.
+# ENABLE_MAIL_READ_STATUS = true
 # Allow automatic replies to emails
 ENABLE_AUTO_REPLY = false
 # Allow webhook
